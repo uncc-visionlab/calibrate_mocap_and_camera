@@ -1,0 +1,23 @@
+<launch>
+
+    <node type="cameracalibrator.py" pkg="camera_calibration"
+          args="--size=5x4 --square=0.0245"
+          name="calibration_gui" output="screen">
+        <remap from="image" to="usb_cam/image_raw" />
+        <remap from="camera" to="usb_cam" />
+    </node>  
+
+    <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="/dev/video0" />
+        <param name="image_width" value="640" />
+        <param name="image_height" value="480" />
+        <param name="pixel_format" value="yuyv" />
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+    </node>       
+    <!--
+    <include file="$(find usb_cam)/launch/usb_cam-test.launch">
+  </include>
+    -->
+
+</launch>

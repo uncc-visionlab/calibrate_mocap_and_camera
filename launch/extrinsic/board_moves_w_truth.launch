@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+<include file="$(find openni2_launch)/launch/openni2.launch"/>
+  <!-- <include file="$(find rgbd_launch)/launch/includes/manager.launch.xml">
+            <arg name="name" value="$(arg manager)" />
+            <arg name="debug" value="$(arg debug)" />
+            <arg name="num_worker_threads"  value="$(arg num_worker_threads)" />
+        </include>
+        <include file="$(find openni2_launch)/launch/openni2.launch"/> -->
+   <!--     
+    <arg name="camera" default="camera" />
+    
+    <arg name="sensor_type_sr4000" default="false" />
+    <arg name="sensor_type_ds325" default="false" />
+    <arg name="sensor_type_xtion" default="true" />
+    <arg name="sensor_type_kinect_xbox360" default="false" />
+
+    <include file="$(find rgbdslam)/launch/generic.depth.device.launch.xml">
+        <arg name="camera" value="$(arg camera)"/>
+        <arg name="data_skip" default="0" />
+        <arg name="depth_registered" default="1" />
+        <arg name="sensor_type_sr4000" value="$(arg sensor_type_sr4000)" />
+        <arg name="sensor_type_ds325" value="$(arg sensor_type_ds325)" />
+        <arg name="sensor_type_xtion" value="$(arg sensor_type_xtion)" />
+        <arg name="sensor_type_kinect_xbox360" value="$(arg sensor_type_kinect_xbox360)" />        
+    </include>  -->
+
+    <arg name="camera_info" default="file://$(find ar_sys)/launch/rgb_PS1080_PrimeSense.yaml"/>
+    <!--    
+        <arg name="camera_enable" default="true"/>
+        <arg name="camera_device" default="/dev/video0"/>
+        <arg name="camera_info" default="file://$(find ar_sys)/camera_info/camera_calibration.yaml"/>
+        <arg name="camera_frame_id" default="camera1"/>
+        <arg name="camera_width" default="640"/>
+        <arg name="camera_height" default="480" />
+        <arg name="camera_fps"  default="30"/>
+    -->
+    <arg name="result_display" default="true"/>
+    <arg name="result_autosize" default="true"/>
+    <arg name="result_draw_markers" default="true" />
+    <arg name="result_draw_markers_cube" default="true" />
+    <arg name="result_draw_markers_axis" default="true" />
+
+    <arg name="uid" default=""/>
+    <arg name="video_namespace" default="camera/rgb"/>
+    <arg name="video_image_topic" default="image_raw"/>
+    <arg name="video_info_topic" default="camera_info"/>
+    <arg name="video_rectified" default="false" />
+
+    <arg name="board_config" default="$(find ar_sys)/data/single/pose_calib_00_phy.yml" />
+    <arg name="board_frame_id" default="board1" />
+    <arg name="marker_size" default="0.035" />
+    <arg name="publish_tf" default="false" />
+
+    <!--
+    <group if="$(arg camera_enable)">
+        <node ns="$(arg video_namespace)" pkg="image_proc" type="image_proc" name="image_proc$(arg uid)" />
+        <node ns="$(arg video_namespace)" pkg="uvc_camera" type="uvc_camera_node" name="uvc_camera$(arg uid)" output="screen">
+            <param name="width" type="int" value="$(arg camera_width)" />
+            <param name="height" type="int" value="$(arg camera_height)" />
+            <param name="fps" type="int" value="$(arg camera_fps)" />
+            <param name="frame_id" type="string" value="/$(arg camera_frame_id)" />
+            <param name="device" type="string" value="$(arg camera_device)" />
+            <param name="camera_info_url" type="string" value="$(arg camera_info)" />
+        </node>
+    </group>
+    -->
+
+    <node ns="/" pkg="ar_sys" type="single_board" name="ar_single_board$(arg uid)" output="screen">
+        <remap from="/camera_info" to="$(arg video_namespace)/$(arg video_info_topic)" />
+        <remap from="/image" to="$(arg video_namespace)/$(arg video_image_topic)" />
+
+        <param name="image_is_rectified" type="bool" value="$(arg video_rectified)"/>
+        <param name="board_config" type="string" value="$(arg board_config)"/>
+        <param name="board_frame" type="string" value="/$(arg board_frame_id)" />
+        <param name="marker_size" type="double" value="$(arg marker_size)"/>
+        <param name="draw_markers" type="bool" value="$(arg result_draw_markers)" />
+        <param name="draw_markers_cube" type="bool" value="$(arg result_draw_markers_cube)" />
+        <param name="draw_markers_axis" type="bool" value="$(arg result_draw_markers_axis)" />
+        <param name="publish_tf" value="$(arg publish_tf)" />
+    </node>
+
+    <node ns="/" pkg="topic_tools" type="relay" name="ar_single_board_relay$(arg uid)" args="/ar_single_board$(arg uid)/transform /arsys_single_board/transform" />
+
+    <group if="$(arg result_display)">
+        <node ns="/" pkg="image_view" type="image_view" name="image_view$(arg uid)" output="screen">
+            <remap from="image" to="/ar_single_board$(arg uid)/result" />
+
+            <param name="autosize" type="bool" value="$(arg result_autosize)" />
+        </node>
+    </group>
+
+        
+    <!-- parameters for ground truth experiments -->
+    <!-- specify the vrpn server IP for transform ground truth -->
+    <arg name="use_optitrack" default="false" />
+    <arg name="vrpn_server_ip" default="192.168.0.20" />    
+    <arg name="vrpn_tf_calib_marker_topic" default="/tf_calib/pose" />  
+    <arg name="vrpn_tf_cam_marker_topic" default="/tf_cam/pose" />  
+
+    <!-- parameters for real-time rviz visualization -->
+    <arg name="run_rviz" default="true"/>
+    <arg name="path" default="$(find calibrate_mocap_and_camera)" />
+    <arg name="rviz_config_file" default="calibrate_mocap_and_camera.rviz" />    
+    
+    <!-- parameters for bagging topic data to file -->
+    <arg name="create_bag" default="false" />
+    <arg name="savefile" default="/home/arwillis/extrinsic_calib.bag" />
+
+    <arg name="bag_topics" 
+         default="/tf $(arg vrpn_tf_calib_marker_topic) $(arg vrpn_tf_cam_marker_topic) /ar_single_board/pose /ar_single_board/transform /camera/rgb/image_raw /camera/rgb/camera_info"/> 
+
+    <node name="tf_calib" pkg="ros_vrpn_client" 
+          type="ros_vrpn_client" args="__name=$(arg vrpn_tf_calib_marker_topic) _vrpn_server_ip:=$(arg vrpn_server_ip)"
+          output="screen" if="$(arg use_optitrack)"/>
+    
+    <node name="tf_cam" pkg="ros_vrpn_client" 
+                type="ros_vrpn_client" args="__name=$(arg vrpn_tf_cam_marker_topic) _vrpn_server_ip:=$(arg vrpn_server_ip)"
+                output="screen" if="$(arg use_optitrack)"/>
+        
+    <node pkg="rosbag" type="record" name="rosbag_record_rgbd_odometry"
+          args="record -o $(arg savefile) $(arg bag_topics)"
+          if="$(arg create_bag)" />    
+
+</launch>
