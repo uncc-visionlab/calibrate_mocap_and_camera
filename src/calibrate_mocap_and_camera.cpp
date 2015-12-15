@@ -155,7 +155,7 @@ int main(int argc, char **argv) {
     //    privnh.setParam("useOpenCL", false);
 
     privnh.param("tf_truth_initialize", tf_truth_initialize, false);
-    privnh.param<std::string>("tf_truth_topic", tf_truth_topic, "");
+    privnh.param<std::string>("tf_cam_topic", tf_camera_marker_topic, "");
     privnh.param("tf_truth_init_time", tf_truth_init_time, -1);
 
     privnh.param<std::string>("optical_parent", optical_parent, "optitrak");
@@ -166,14 +166,14 @@ int main(int argc, char **argv) {
 
     if (tf_truth_initialize) {
         std::cout << "Initializing transform to ground truth from topic \""
-                << tf_truth_topic << "\" wait " << tf_truth_init_time
+                << tf_camera_marker_topic << "\" wait " << tf_truth_init_time
                 << " seconds." << std::endl;
-        engineptr->initializeGroundTruthSubscriber(nodeptr, tf_truth_topic);
+        engineptr->initializeGroundTruthSubscriber(nodeptr, tf_camera_marker_topic);
         if (tf_truth_init_time > 0) {
             engineptr->setGroundTruthInitializationTime(tf_truth_init_time);
         }
         std::cout << "Waiting for ground truth transform on topic \""
-                << tf_truth_topic << "\"..." << std::endl;
+                << tf_camera_marker_topic << "\"..." << std::endl;
     } else {
         tf::Transform identity;
         identity.setIdentity();
