@@ -27,7 +27,7 @@ public:
 
     CalibrateMocapAndCamera(std::string optical_parent, std::string optical_frame) :
     map_frame_id_str(optical_parent),
-    rgbd_frame_id_str(optical_frame) {
+    rgb_frame_id_str(optical_frame) {
     };
 
     virtual ~CalibrateMocapAndCamera() {
@@ -85,7 +85,11 @@ private:
     ros::Subscriber sub_tf_aruco_calib_pose;
 
     std::string map_frame_id_str;
-    std::string rgbd_frame_id_str;
+    std::string rgb_frame_id_str;
+    
+    std::string ar_calib_frame_id_str;
+    std::string tf_calib_frame_id_str;
+    std::string tf_cam_frame_id_str;
 
     tf::TransformBroadcaster br;
 

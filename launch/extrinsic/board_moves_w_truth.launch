@@ -50,7 +50,7 @@
     <arg name="board_config" default="$(find calibrate_mocap_and_camera)/data/single/pose_calib_00.yml" />
     <arg name="board_frame_id" default="ar_calib_frame" />
     <arg name="marker_size" default="0.035" />
-    <arg name="publish_tf" default="true" />
+    <arg name="publish_tf" default="false" />
 
     <!--
     <group if="$(arg camera_enable)">
