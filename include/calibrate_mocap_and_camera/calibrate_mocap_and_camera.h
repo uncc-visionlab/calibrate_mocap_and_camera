@@ -34,10 +34,10 @@ public:
     };
 
     void initializeSubscribers(ros::NodeHandlePtr nodeptr,
-            std::string topic, int timeval = 10) {
-        sub_tf_cam_marker = nodeptr->subscribe(topic, 10, &CalibrateMocapAndCamera::tf_camera_marker_Callback, this);
-        sub_tf_calib_marker = nodeptr->subscribe(topic, 10, &CalibrateMocapAndCamera::tf_calib_marker_Callback, this);
-        sub_tf_aruco_calib_pose = nodeptr->subscribe(topic, 10, &CalibrateMocapAndCamera::ar_calib_pose_Callback, this);
+            std::string tf_camera_topic, std::string tf_calib_topic, std::string ar_calib_topic, int timeval = 10) {
+        sub_tf_cam_marker = nodeptr->subscribe(tf_camera_topic, 1, &CalibrateMocapAndCamera::tf_camera_marker_Callback, this);
+        sub_tf_calib_marker = nodeptr->subscribe(tf_calib_topic, 1, &CalibrateMocapAndCamera::tf_calib_marker_Callback, this);
+        sub_tf_aruco_calib_pose = nodeptr->subscribe(ar_calib_topic, 1, &CalibrateMocapAndCamera::ar_calib_pose_Callback, this);
         //        setGroundTruthInitializationTime(timeval);
     }
 

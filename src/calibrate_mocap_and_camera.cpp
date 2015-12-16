@@ -60,10 +60,10 @@ void CalibrateMocapAndCamera::tf_camera_marker_Callback(const geometry_msgs::Tra
     eig_quat[2] += quaternion.z;
     eig_quat[3] += quaternion.w;
     num_msgs++;
-    ROS_DEBUG("Heard tf_truth.");
+    ROS_INFO("Heard tf_camera_marker.");
     //    std::cout << "rotation = " << tf_truth->transform.rotation << std::endl
     //            << "translation = " << tf_truth->transform.translation << std::endl;
-    if (tf_camera_marker_pose->header.stamp.sec - first_tf->header.stamp.sec > tf_truth_init_time) {
+    if (false && tf_camera_marker_pose->header.stamp.sec - first_tf->header.stamp.sec > tf_truth_init_time) {
         std::cout << "Initialization time has expired." << std::endl;
         eig_trns[0] /= num_msgs;
         eig_trns[1] /= num_msgs;
@@ -88,9 +88,12 @@ void CalibrateMocapAndCamera::tf_camera_marker_Callback(const geometry_msgs::Tra
 }
 
 void CalibrateMocapAndCamera::tf_calib_marker_Callback(const geometry_msgs::TransformStampedConstPtr& tf_calib_marker_pose) {
+    //ROS_INFO("Heard tf_calib_marker.");
+
 }
 
 void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::TransformStampedConstPtr& ar_calib_pose) {
+    ROS_INFO("Heard ar_calib_pose.");
 }
 
 void CalibrateMocapAndCamera::setInitialTransform(tf::Transform nav_pose) {
@@ -150,7 +153,7 @@ int main(int argc, char **argv) {
      * The first NodeHandle constructed will fully initialize this node, and the last
      * NodeHandle destructed will close down the node.
      */
-    std::string tf_camera_marker_topic, tf_calib_marker_topic;
+    std::string tf_camera_marker_topic, tf_calib_marker_topic, ar_calib_topic;
     std::string optical_parent, optical_frame;
     ros::NodeHandlePtr nodeptr(new ros::NodeHandle);
     ros::NodeHandle privnh("~");
@@ -160,6 +163,7 @@ int main(int argc, char **argv) {
 
     privnh.param<std::string>("tf_cam_topic", tf_camera_marker_topic, "/tf_cam/pose");
     privnh.param<std::string>("tf_calib_topic", tf_calib_marker_topic, "/tf_calib/pose");
+    privnh.param<std::string>("ar_calib_topic", ar_calib_topic, "/ar_single_board/pose");
 
     privnh.param<std::string>("optical_parent", optical_parent, "optitrack");
     privnh.param<std::string>("optical_frame", optical_frame, "rgb_optical_frame");
@@ -169,7 +173,8 @@ int main(int argc, char **argv) {
 
     std::cout << "Initializing transform to ground truth from topic \""
             << tf_camera_marker_topic << "\"" << std::endl;
-    engineptr->initializeSubscribers(nodeptr, tf_camera_marker_topic);
+    engineptr->initializeSubscribers(nodeptr, tf_camera_marker_topic, tf_calib_marker_topic,
+            ar_calib_topic);
     //    if (tf_truth_init_time > 0) {
     //        engineptr->setGroundTruthInitializationTime(tf_truth_init_time);
     //    }
