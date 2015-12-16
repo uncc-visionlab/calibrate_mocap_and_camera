@@ -25,7 +25,7 @@
         <arg name="sensor_type_kinect_xbox360" value="$(arg sensor_type_kinect_xbox360)" />        
     </include>  -->
 
-    <arg name="camera_info" default="file://$(find ar_sys)/launch/rgb_PS1080_PrimeSense.yaml"/>
+    <arg name="camera_info" default="file://$(find calibrate_mocap_and_camera)/launch/rgb_PS1080_PrimeSense.yaml"/>
     <!--    
         <arg name="camera_enable" default="true"/>
         <arg name="camera_device" default="/dev/video0"/>
@@ -47,7 +47,7 @@
     <arg name="video_info_topic" default="camera_info"/>
     <arg name="video_rectified" default="false" />
 
-    <arg name="board_config" default="$(find ar_sys)/data/single/pose_calib_00.yml" />
+    <arg name="board_config" default="$(find calibrate_mocap_and_camera)/data/single/pose_calib_00.yml" />
     <arg name="board_frame_id" default="board1" />
     <arg name="marker_size" default="0.035" />
     <arg name="publish_tf" default="false" />

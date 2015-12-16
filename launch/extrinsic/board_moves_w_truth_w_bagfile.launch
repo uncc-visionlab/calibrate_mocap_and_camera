@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
 
-    <arg name="camera_info" default="file://$(find ar_sys)/launch/rgb_PS1080_PrimeSense.yaml"/>
+    <arg name="camera_info" default="file://$(find calibrate_mocap_and_camera)/launch/rgb_PS1080_PrimeSense.yaml"/>
     <arg name="rgb_optical_frame" default="rgb_optical_frame" />
 
     <arg name="file_A" default="extrinsic_calib_2015-12-15-12-40-06.bag" />
@@ -34,7 +34,7 @@
     <arg name="video_info_topic" default="camera_info"/>
     <arg name="video_rectified" default="false" />
 
-    <arg name="board_config" default="$(find ar_sys)/data/single/pose_calib_00.yml" />
+    <arg name="board_config" default="$(find calibrate_mocap_and_camera)/data/single/pose_calib_00.yml" />
     <arg name="board_frame_id" default="ar_calib_frame" />
     <arg name="marker_size" default="0.035" />
     <arg name="publish_tf" default="true" />
