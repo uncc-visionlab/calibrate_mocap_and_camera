@@ -51,43 +51,43 @@ void CalibrateMocapAndCamera::tf_camera_marker_Callback(const geometry_msgs::Tra
         eig_quat[0] = eig_quat[1] = eig_quat[2] = eig_quat[3] = 0;
         eig_trns[0] = eig_trns[1] = eig_trns[2] = 0;
     }
-//    geometry_msgs::Vector3 translation;
-//    geometry_msgs::Quaternion quaternion;
-//    translation = tf_camera_marker_pose->transform.translation;
-//    quaternion = tf_camera_marker_pose->transform.rotation;
-//    eig_trns[0] += translation.x;
-//    eig_trns[1] += translation.y;
-//    eig_trns[2] += translation.z;
-//    eig_quat[0] += quaternion.x;
-//    eig_quat[1] += quaternion.y;
-//    eig_quat[2] += quaternion.z;
-//    eig_quat[3] += quaternion.w;
-//    num_msgs++;
+    //    geometry_msgs::Vector3 translation;
+    //    geometry_msgs::Quaternion quaternion;
+    //    translation = tf_camera_marker_pose->transform.translation;
+    //    quaternion = tf_camera_marker_pose->transform.rotation;
+    //    eig_trns[0] += translation.x;
+    //    eig_trns[1] += translation.y;
+    //    eig_trns[2] += translation.z;
+    //    eig_quat[0] += quaternion.x;
+    //    eig_quat[1] += quaternion.y;
+    //    eig_quat[2] += quaternion.z;
+    //    eig_quat[3] += quaternion.w;
+    //    num_msgs++;
     //ROS_INFO("Heard tf_camera_marker.");
     //    std::cout << "rotation = " << tf_truth->transform.rotation << std::endl
     //            << "translation = " << tf_truth->transform.translation << std::endl;
-//    if (tf_camera_marker_pose->header.stamp.sec - first_tf->header.stamp.sec > tf_truth_init_time) {
-//        std::cout << "Initialization time has expired." << std::endl;
-//        eig_trns[0] /= num_msgs;
-//        eig_trns[1] /= num_msgs;
-//        eig_trns[2] /= num_msgs;
-//        eig_quat[0] /= num_msgs;
-//        eig_quat[1] /= num_msgs;
-//        eig_quat[2] /= num_msgs;
-//        eig_quat[3] /= num_msgs;
-//        tf::Vector3 tval(eig_trns[0], eig_trns[1], eig_trns[2]);
-//        tf::Quaternion qval(eig_quat[0], eig_quat[1], eig_quat[2], eig_quat[3]);
-//        qval = qval.normalize();
-//        tf::Transform initialTransform(qval, tval);
-//        std::cout << "Received " << num_msgs << " values for ground truth."
-//                << " Setting ground truth transform to: " << std::endl
-//                << "rotation = (" << qval.getX() << ", " << qval.getY()
-//                << ", " << qval.getZ() << ", " << qval.getW() << ")" << std::endl
-//                << "translation = (" << tval.getX() << ", " << tval.getY()
-//                << ", " << tval.getZ() << ")" << std::endl;
-//        setInitialTransform(initialTransform);
-//        sub_tf_cam_marker.shutdown();
-//    }
+    //    if (tf_camera_marker_pose->header.stamp.sec - first_tf->header.stamp.sec > tf_truth_init_time) {
+    //        std::cout << "Initialization time has expired." << std::endl;
+    //        eig_trns[0] /= num_msgs;
+    //        eig_trns[1] /= num_msgs;
+    //        eig_trns[2] /= num_msgs;
+    //        eig_quat[0] /= num_msgs;
+    //        eig_quat[1] /= num_msgs;
+    //        eig_quat[2] /= num_msgs;
+    //        eig_quat[3] /= num_msgs;
+    //        tf::Vector3 tval(eig_trns[0], eig_trns[1], eig_trns[2]);
+    //        tf::Quaternion qval(eig_quat[0], eig_quat[1], eig_quat[2], eig_quat[3]);
+    //        qval = qval.normalize();
+    //        tf::Transform initialTransform(qval, tval);
+    //        std::cout << "Received " << num_msgs << " values for ground truth."
+    //                << " Setting ground truth transform to: " << std::endl
+    //                << "rotation = (" << qval.getX() << ", " << qval.getY()
+    //                << ", " << qval.getZ() << ", " << qval.getW() << ")" << std::endl
+    //                << "translation = (" << tval.getX() << ", " << tval.getY()
+    //                << ", " << tval.getZ() << ")" << std::endl;
+    //        setInitialTransform(initialTransform);
+    //        sub_tf_cam_marker.shutdown();
+    //    }
 }
 
 void CalibrateMocapAndCamera::tf_calib_marker_Callback(const geometry_msgs::TransformStampedConstPtr& tf_calib_marker_pose) {
@@ -98,6 +98,7 @@ void CalibrateMocapAndCamera::tf_calib_marker_Callback(const geometry_msgs::Tran
 void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::TransformStampedConstPtr& ar_calib_pose) {
     ROS_INFO("Heard ar_calib_pose.");
     static tf::TransformListener listener;
+    static tf::TransformBroadcaster br;
     std::string cam_frame_id_str("tf_cam");
     std::string calib_frame_id_str("tf_calib");
     tf::StampedTransform cam_marker_pose;
@@ -105,22 +106,37 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
 
     ROS_INFO("Looking up transform from frame '%s' to frame '%s'", map_frame_id_str.c_str(),
             cam_frame_id_str.c_str());
+    //ros::Time queryTime(ros::Time(0));
+    ros::Time queryTime = ros::Time::now();
+    //ros::Time queryTime(ros::Time::now()-ros::Duration(0.1));
     try {
         listener.waitForTransform(map_frame_id_str, cam_frame_id_str,
-                ros::Time(0), ros::Duration(0.5));
+                queryTime, ros::Duration(1));
         listener.lookupTransform(map_frame_id_str, cam_frame_id_str,
-                ros::Time(0), cam_marker_pose);
+                queryTime, cam_marker_pose);
         listener.waitForTransform(map_frame_id_str, calib_frame_id_str,
-                ros::Time(0), ros::Duration(0.5));
+                queryTime, ros::Duration(1));
         listener.lookupTransform(map_frame_id_str, calib_frame_id_str,
-                ros::Time(0), calib_marker_pose);
+                queryTime, calib_marker_pose);
     } catch (tf::TransformException ex) {
         ROS_ERROR("%s", ex.what());
         //        ros::Duration(1.0).sleep();
     }
-    std::cout << "cam_pose = " << cam_marker_pose.getOrigin() << std::endl;
-    std::cout << "calib_pose = " << calib_marker_pose.getOrigin() << std::endl;
+    std::cout << "cam_pose = " << cam_marker_pose.getOrigin().x() << ", " <<
+            cam_marker_pose.getOrigin().y() << ", " << cam_marker_pose.getOrigin().z() << std::endl;
+    std::cout << "calib_pose = " << calib_marker_pose.getOrigin().x() << ", " <<
+            calib_marker_pose.getOrigin().y() << ", " << calib_marker_pose.getOrigin().z() << std::endl;
     std::cout << "ar_pose = " << ar_calib_pose->transform.translation << std::endl;
+    static geometry_msgs::TransformStamped ar_calib_to_camera;
+
+    tf::Transform transform;
+    transform.setOrigin(tf::Vector3(ar_calib_pose->transform.translation.x,
+            ar_calib_pose->transform.translation.y, ar_calib_pose->transform.translation.z));
+    transform.setRotation(tf::Quaternion(ar_calib_pose->transform.rotation.x, ar_calib_pose->transform.rotation.y,
+            ar_calib_pose->transform.rotation.z, ar_calib_pose->transform.rotation.w).normalize());
+    tf::Transform itransform = transform.inverse();
+    br.sendTransform(tf::StampedTransform(itransform,
+            ros::Time::now(), "ar_optical_frame", "rgb_optical_pose"));
 }
 
 void CalibrateMocapAndCamera::setInitialTransform(tf::Transform nav_pose) {
