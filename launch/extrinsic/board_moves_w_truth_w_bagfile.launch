@@ -4,20 +4,21 @@
     <arg name="camera_info" default="file://$(find calibrate_mocap_and_camera)/launch/rgb_PS1080_PrimeSense.yaml"/>
     <arg name="rgb_optical_frame" default="rgb_optical_frame" />
 
-    <arg name="file_A" default="extrinsic_calib_2015-12-15-12-40-06.bag" />
-    <arg name="file_B" default="extrinsic_calib_2015-12-15-12-41-45.bag" />
-    <arg name="file_C" default="extrinsic_calib_2015-12-15-12-42-29.bag" />
+    <arg name="file_A" default="extrinsic_calib_2015-12-16-13-53-19.bag" />
+    <arg name="file_B" default="extrinsic_calib_2015-12-16-14-33-58.bag" />
+    <arg name="file_C" default="extrinsic_calib_2015-12-15-14-35-08.bag" />
     <arg name="file_D" default="" />
     <arg name="file_E" default="" />    
-    <arg name="file_1" default="$(arg file_A)" />
+    <arg name="file_1" default="$(arg file_B)" />
     
     <!-- parameters for real-time rviz visualization -->
     <arg name="run_rviz" default="false"/>
     <arg name="path" default="$(find calibrate_mocap_and_camera)" />
     <arg name="rviz_config_file" default="calibrate_mocap_and_camera_bagfile.rviz" />    
     
+    <param name="use_sim_time" value="true" />
     <node pkg="rosbag" type="play" name="player" output="screen" 
-          args="-r 0.75 $(arg path)/../../../$(arg file_1)"/> 
+          args="-r 1 --clock $(arg path)/../../../$(arg file_1)"/> 
   
     <node pkg="rviz" type="rviz" name="rviz" output="screen" 
           args="-d $(arg path)/rviz/$(arg rviz_config_file)"/>
@@ -94,21 +95,15 @@
         <param name="optical_frame" value = "$(arg rgb_optical_frame)"/>
     </node>
     <!--
-    <node name="tf_calib" pkg="ros_vrpn_client" 
-          type="ros_vrpn_client" args="__name=$(arg vrpn_tf_calib_marker_topic) _vrpn_server_ip:=$(arg vrpn_server_ip)"
-          output="screen" if="$(arg use_optitrack)"/>
-    
-    <node name="tf_cam" pkg="ros_vrpn_client" 
-                type="ros_vrpn_client" args="__name=$(arg vrpn_tf_cam_marker_topic) _vrpn_server_ip:=$(arg vrpn_server_ip)"
-                output="screen" if="$(arg use_optitrack)"/>
-        
-<node pkg="rosbag" type="record" name="rosbag_record_rgbd_odometry"
-    args="record -o $(arg savefile) $(arg bag_topics)"
-    if="$(arg create_bag)" />
-    -->
-    <!--
   <node name="reefbot_base" pkg="tf" 
           type="static_transform_publisher"  
           args="0.0 -0.01 0.01  -0.5 0.5 -0.5 -0.5 $(arg rgbd_frame) reefbot_base 100" />
     -->
+    <new name="tf_calib_to_ar_calib" pkg="tf"
+        type="static_transform_publisher"
+        args="0.00085 -0.017555 -0.000385 0 0 0 1 $(arg vrpn_tf_calib_marker_topic) ar_calib_frame 1000" />
+
+    <new name="ar_calib_to_optical_ar_calib" pkg="tf"
+        type="static_transform_publisher"
+        args="0.0 0.0 0.0 0.5 -0.5 0.5 -0.5 ar_calib_frame ar_optical_frame 1000" />    
 </launch>

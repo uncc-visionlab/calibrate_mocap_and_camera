@@ -28,10 +28,10 @@ public:
     CalibrateMocapAndCamera(std::string optical_parent, std::string optical_frame) :
     map_frame_id_str(optical_parent),
     rgb_frame_id_str(optical_frame) {
-    };
+    }
 
     virtual ~CalibrateMocapAndCamera() {
-    };
+    }
 
     void initializeSubscribers(ros::NodeHandlePtr nodeptr,
             std::string tf_camera_topic, std::string tf_calib_topic, std::string ar_calib_topic, int timeval = 10) {

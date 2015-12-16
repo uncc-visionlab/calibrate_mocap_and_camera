@@ -142,6 +142,14 @@
     <node name="optical_to_odom" pkg="tf" 
           type="static_transform_publisher"  
           args="0.0 0.01 0.01  -0.5 0.5 -0.5 -0.5 $(arg rgb_optical_frame) reefbot_base 100" />
+    
+    <new name="tf_calib_to_ar_calib" pkg="tf"
+        type="static_transform_publisher"
+        args="0.00085 0.017555 -0.000385 0 0 0 1 $(arg vrpn_tf_calib_marker_topic) ar_calib_frame 1000" />
+
+    <new name="ar_calib_to_optical_ar_calib" pkg="tf"
+        type="static_transform_publisher"
+        args="0.0 0.0 0.0 0.5 -0.5 0.5 -0.5 ar_calib_frame ar_optical_frame 1000" />
 <!--
     <node name="global_calib" pkg="tf" 
           type="static_transform_publisher"  
