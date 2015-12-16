@@ -6,7 +6,7 @@
  */
 
 #ifndef CALIBRATE_MOCAP_AND_CAMERA_H
-#define	CALIBRATE_MOCAP_AND_CAMERA_H
+#define CALIBRATE_MOCAP_AND_CAMERA_H
 
 // Standard C++ includes
 #include <string>
@@ -33,10 +33,12 @@ public:
     virtual ~CalibrateMocapAndCamera() {
     };
 
-    void initializeGroundTruthSubscriber(ros::NodeHandlePtr nodeptr,
+    void initializeSubscribers(ros::NodeHandlePtr nodeptr,
             std::string topic, int timeval = 10) {
-        sub_tf_truth = nodeptr->subscribe(topic, 10, &CalibrateMocapAndCamera::tf_truth_Callback, this);
-        setGroundTruthInitializationTime(timeval);
+        sub_tf_cam_marker = nodeptr->subscribe(topic, 10, &CalibrateMocapAndCamera::tf_camera_marker_Callback, this);
+        sub_tf_calib_marker = nodeptr->subscribe(topic, 10, &CalibrateMocapAndCamera::tf_calib_marker_Callback, this);
+        sub_tf_aruco_calib_pose = nodeptr->subscribe(topic, 10, &CalibrateMocapAndCamera::ar_calib_pose_Callback, this);
+        //        setGroundTruthInitializationTime(timeval);
     }
 
     void setGroundTruthInitializationTime(int timeval) {
@@ -45,7 +47,9 @@ public:
 
     void setInitialTransform(tf::Transform nav_pose);
 
-    void tf_truth_Callback(const geometry_msgs::TransformStampedConstPtr& tf_truth);
+    void tf_camera_marker_Callback(const geometry_msgs::TransformStampedConstPtr& tf_camera_marker_pose);
+    void tf_calib_marker_Callback(const geometry_msgs::TransformStampedConstPtr& tf_calib_marker_pose);
+    void ar_calib_pose_Callback(const geometry_msgs::TransformStampedConstPtr& ar_calib_pose);
 
     void setTransformPublisher(ros::Publisher p) {
         pubXforms = p;
@@ -76,7 +80,9 @@ private:
 
     // variable used when using a ground truth reference initialization
     int tf_truth_init_time;
-    ros::Subscriber sub_tf_truth;
+    ros::Subscriber sub_tf_cam_marker;
+    ros::Subscriber sub_tf_calib_marker;
+    ros::Subscriber sub_tf_aruco_calib_pose;
 
     std::string map_frame_id_str;
     std::string rgbd_frame_id_str;
@@ -87,5 +93,5 @@ private:
     tf::Transform calibration_board_marker_pose;
     tf::Transform camera_marker_pose;
 };
-#endif	/* CALIBRATE_MOCAP_AND_CAMERA_H */
+#endif /* CALIBRATE_MOCAP_AND_CAMERA_H */
 

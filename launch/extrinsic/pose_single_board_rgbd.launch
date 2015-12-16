@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <launch>
-<include file="$(find openni2_launch)/launch/openni2.launch"/>
+    <include file="$(find openni2_launch)/launch/openni2.launch"/>
   <!-- <include file="$(find rgbd_launch)/launch/includes/manager.launch.xml">
             <arg name="name" value="$(arg manager)" />
             <arg name="debug" value="$(arg debug)" />
@@ -48,7 +48,7 @@
     <arg name="video_info_topic" default="camera_info"/>
     <arg name="video_rectified" default="false" />
 
-    <arg name="board_config" default="$(find ar_sys)/data/single/pose_calib_00_phy.yml" />
+    <arg name="board_config" default="$(find ar_sys)/data/single/pose_calib_00.yml" />
     <arg name="board_frame_id" default="board1" />
     <arg name="marker_size" default="0.035" />
     <arg name="publish_tf" default="false" />

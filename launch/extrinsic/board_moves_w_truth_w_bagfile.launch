@@ -2,6 +2,7 @@
 <launch>
 
     <arg name="camera_info" default="file://$(find ar_sys)/launch/rgb_PS1080_PrimeSense.yaml"/>
+    <arg name="rgb_optical_frame" default="rgb_optical_frame" />
 
     <arg name="file_A" default="extrinsic_calib_2015-12-15-12-40-06.bag" />
     <arg name="file_B" default="extrinsic_calib_2015-12-15-12-41-45.bag" />
@@ -33,10 +34,10 @@
     <arg name="video_info_topic" default="camera_info"/>
     <arg name="video_rectified" default="false" />
 
-    <arg name="board_config" default="$(find ar_sys)/data/single/pose_calib_00_phy.yml" />
-    <arg name="board_frame_id" default="board1" />
+    <arg name="board_config" default="$(find ar_sys)/data/single/pose_calib_00.yml" />
+    <arg name="board_frame_id" default="ar_calib_frame" />
     <arg name="marker_size" default="0.035" />
-    <arg name="publish_tf" default="false" />
+    <arg name="publish_tf" default="true" />
 
     <!--
     <group if="$(arg camera_enable)">
@@ -75,7 +76,6 @@
         </node>
     </group>
     -->
-
         
     <!-- parameters for ground truth experiments -->
     <!-- specify the vrpn server IP for transform ground truth -->
@@ -85,8 +85,14 @@
     <arg name="vrpn_tf_cam_marker_topic" default="/tf_cam/pose" />   
     
     <node name="calibrate_mocap_and_camera" pkg="calibrate_mocap_and_camera"
-    type="calibrate_mocap_and_camera"
-    output="screen"/>
+        type="calibrate_mocap_and_camera"
+        output="screen">
+        
+        <param name="tf_cam_topic" value="/tf_cam/pose"/>
+        <param name="tf_calib_topic" value="/tf_calib/pose"/>
+        <param name="optical_parent" value = "optitrack"/>
+        <param name="optical_frame" value = "$(arg rgb_optical_frame)"/>
+    </node>
     <!--
     <node name="tf_calib" pkg="ros_vrpn_client" 
           type="ros_vrpn_client" args="__name=$(arg vrpn_tf_calib_marker_topic) _vrpn_server_ip:=$(arg vrpn_server_ip)"
@@ -96,9 +102,13 @@
                 type="ros_vrpn_client" args="__name=$(arg vrpn_tf_cam_marker_topic) _vrpn_server_ip:=$(arg vrpn_server_ip)"
                 output="screen" if="$(arg use_optitrack)"/>
         
-    <node pkg="rosbag" type="record" name="rosbag_record_rgbd_odometry"
-          args="record -o $(arg savefile) $(arg bag_topics)"
-          if="$(arg create_bag)" />
-          -->
-
+<node pkg="rosbag" type="record" name="rosbag_record_rgbd_odometry"
+    args="record -o $(arg savefile) $(arg bag_topics)"
+    if="$(arg create_bag)" />
+    -->
+    <!--
+  <node name="reefbot_base" pkg="tf" 
+          type="static_transform_publisher"  
+          args="0.0 -0.01 0.01  -0.5 0.5 -0.5 -0.5 $(arg rgbd_frame) reefbot_base 100" />
+    -->
 </launch>

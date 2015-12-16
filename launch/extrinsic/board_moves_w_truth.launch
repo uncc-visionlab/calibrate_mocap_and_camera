@@ -47,7 +47,7 @@
     <arg name="video_info_topic" default="camera_info"/>
     <arg name="video_rectified" default="false" />
 
-    <arg name="board_config" default="$(find ar_sys)/data/single/pose_calib_00_phy.yml" />
+    <arg name="board_config" default="$(find ar_sys)/data/single/pose_calib_00.yml" />
     <arg name="board_frame_id" default="board1" />
     <arg name="marker_size" default="0.035" />
     <arg name="publish_tf" default="false" />
