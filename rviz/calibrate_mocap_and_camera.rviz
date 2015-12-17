@@ -25,7 +25,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /TF1
-        - /TF1/Status1
       Splitter Ratio: 0.526846
     Tree Height: 137
 Visualization Manager:
@@ -64,7 +63,7 @@ Visualization Manager:
           Value: true
         camera_rgb_optical_frame:
           Value: true
-        optitrak:
+        optitrack:
           Value: true
         reefbot_base:
           Value: true
@@ -72,14 +71,18 @@ Visualization Manager:
           Value: true
         tf_calib:
           Value: true
+        tf_cam:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        optitrak:
+        optitrack:
           tf_calib:
+            {}
+          tf_cam:
             {}
       Update Interval: 0
       Value: true
@@ -174,7 +177,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: optitrak
+    Fixed Frame: optitrack
     Frame Rate: 30
   Name: root
   Tools:
@@ -230,5 +233,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1535
-  X: 375
+  X: 365
   Y: 14

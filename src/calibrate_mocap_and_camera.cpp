@@ -103,6 +103,7 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
     std::string calib_frame_id_str("tf_calib");
     tf::StampedTransform cam_marker_pose;
     tf::StampedTransform calib_marker_pose;
+    tf::StampedTransform tf_cam_to_rgb_optical_frame;
 
     ROS_INFO("Looking up transform from frame '%s' to frame '%s'", map_frame_id_str.c_str(),
             cam_frame_id_str.c_str());
@@ -137,6 +138,20 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
     tf::Transform itransform = transform.inverse();
     br.sendTransform(tf::StampedTransform(itransform,
             ros::Time::now(), "ar_optical_frame", "rgb_optical_pose"));
+    try {
+        listener.waitForTransform(cam_frame_id_str, "rgb_optical_pose",
+                queryTime, ros::Duration(1));
+        listener.lookupTransform(cam_frame_id_str, "rgb_optical_pose",
+                queryTime, tf_cam_to_rgb_optical_frame);
+    } catch (tf::TransformException ex) {
+        ROS_ERROR("%s", ex.what());
+        //        ros::Duration(1.0).sleep();
+    }
+    br.sendTransform(tf::StampedTransform(tf_cam_to_rgb_optical_frame,
+            ros::Time::now(), "tf_cam", "calib_rgb_optical_pose"));
+    std::cout << "calib_result = " << tf_cam_to_rgb_optical_frame.getOrigin().x() << ", " <<
+            tf_cam_to_rgb_optical_frame.getOrigin().y() << ", " << tf_cam_to_rgb_optical_frame.getOrigin().z() << std::endl;
+ 
 }
 
 void CalibrateMocapAndCamera::setInitialTransform(tf::Transform nav_pose) {
