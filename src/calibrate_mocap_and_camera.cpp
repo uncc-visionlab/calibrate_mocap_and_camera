@@ -131,6 +131,16 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
     static geometry_msgs::TransformStamped ar_calib_to_camera;
 
     tf::Transform transform;
+    //    tf::Vector3 translation(ar_calib_pose->transform.translation.x,
+    //            ar_calib_pose->transform.translation.y, ar_calib_pose->transform.translation.z);
+    //    translation.setX(-translation.getX());
+    //    transform.setOrigin(translation);
+    //    tf::Matrix3x3 rotationMatrix(tf::Quaternion(ar_calib_pose->transform.rotation.x, ar_calib_pose->transform.rotation.y,
+    //            ar_calib_pose->transform.rotation.z, ar_calib_pose->transform.rotation.w).normalize());
+    //    tf::Vector3 e_x = rotationMatrix[0];
+    //    e_x *= -1;
+    //    rotationMatrix[0] = e_x;
+    //    transform.setBasis(rotationMatrix);
     transform.setOrigin(tf::Vector3(ar_calib_pose->transform.translation.x,
             ar_calib_pose->transform.translation.y, ar_calib_pose->transform.translation.z));
     transform.setRotation(tf::Quaternion(ar_calib_pose->transform.rotation.x, ar_calib_pose->transform.rotation.y,
@@ -151,7 +161,20 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
             ros::Time::now(), "tf_cam", "calib_rgb_optical_pose"));
     std::cout << "calib_result = " << tf_cam_to_rgb_optical_frame.getOrigin().x() << ", " <<
             tf_cam_to_rgb_optical_frame.getOrigin().y() << ", " << tf_cam_to_rgb_optical_frame.getOrigin().z() << std::endl;
- 
+    tf::Quaternion calib_rot = tf_cam_to_rgb_optical_frame.getRotation();
+    tf::Vector3 calib_translation = tf_cam_to_rgb_optical_frame.getOrigin();
+    if (logdata) {
+        //        fprintf(fos, "%f %f %f %f %f %f %f\n",
+        //                calib_translation.getX(), calib_translation.getY(), calib_translation.getZ(),
+        //                calib_rot.getX(), calib_rot.getY(), calib_rot.getZ(), calib_rot.getW());
+        fos << calib_translation.getX() << " "
+                << calib_translation.getY() << " "
+                << calib_translation.getZ() << " "
+                << calib_rot.getX() << " "
+                << calib_rot.getY() << " "
+                << calib_rot.getZ() << " "
+                << calib_rot.getW() << std::endl;
+    }
 }
 
 void CalibrateMocapAndCamera::setInitialTransform(tf::Transform nav_pose) {
@@ -212,7 +235,8 @@ int main(int argc, char **argv) {
      * NodeHandle destructed will close down the node.
      */
     std::string tf_camera_marker_topic, tf_calib_marker_topic, ar_calib_topic;
-    std::string optical_parent, optical_frame;
+    std::string optical_parent, optical_frame, _logfilename;
+    bool _logdata;
     ros::NodeHandlePtr nodeptr(new ros::NodeHandle);
     ros::NodeHandle privnh("~");
 
@@ -222,14 +246,16 @@ int main(int argc, char **argv) {
     privnh.param<std::string>("tf_cam_topic", tf_camera_marker_topic, "/tf_cam/pose");
     privnh.param<std::string>("tf_calib_topic", tf_calib_marker_topic, "/tf_calib/pose");
     privnh.param<std::string>("ar_calib_topic", ar_calib_topic, "/ar_single_board/transform");
-
+    privnh.param("logdata", _logdata, false);
+    privnh.param<std::string>("logfilename", _logfilename, "");
     privnh.param<std::string>("optical_parent", optical_parent, "optitrack");
     privnh.param<std::string>("optical_frame", optical_frame, "rgb_optical_frame");
     std::cout << "RGBD parent coordinate frame name = \"" << optical_parent << "\"" << std::endl;
     std::cout << "RGBD coordinate frame name =  \"" << optical_frame << "\"" << std::endl;
-    CalibrateMocapAndCamera::Ptr engineptr(new CalibrateMocapAndCamera(optical_parent, optical_frame));
-    std::cout << "Initializing transform to ground truth from topic \""
-            << tf_camera_marker_topic << "\"" << std::endl;
+    CalibrateMocapAndCamera::Ptr engineptr(new CalibrateMocapAndCamera(optical_parent, 
+            optical_frame, _logdata, _logfilename));
+    //    std::cout << "Initializing transform to ground truth from topic \""
+    //            << tf_camera_marker_topic << "\"" << std::endl;
     engineptr->initializeSubscribers(nodeptr, tf_camera_marker_topic, tf_calib_marker_topic,
             ar_calib_topic);
     //    if (tf_truth_init_time > 0) {

@@ -11,6 +11,7 @@
 // Standard C++ includes
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <math.h>
 
 // ROS includes
@@ -25,12 +26,22 @@ class CalibrateMocapAndCamera {
 public:
     typedef boost::shared_ptr<CalibrateMocapAndCamera> Ptr;
 
-    CalibrateMocapAndCamera(std::string optical_parent, std::string optical_frame) :
+    CalibrateMocapAndCamera(std::string optical_parent, std::string optical_frame,
+    bool _logdata, std::string _logfilename) :
     map_frame_id_str(optical_parent),
-    rgb_frame_id_str(optical_frame) {
+    rgb_frame_id_str(optical_frame),
+    logdata(_logdata),
+    logfilename(_logfilename) {
+        if (_logdata) {
+            std::cout << "Opening logfile " << _logfilename << "." << std::endl;
+            fos.open(_logfilename.c_str());
+        }
     }
 
     virtual ~CalibrateMocapAndCamera() {
+        if (logdata) {
+            fos.close();
+        }
     }
 
     void initializeSubscribers(ros::NodeHandlePtr nodeptr,
@@ -96,6 +107,10 @@ private:
     tf::Transform camera_pose;
     tf::Transform calibration_board_marker_pose;
     tf::Transform camera_marker_pose;
+    
+    bool logdata;
+    std::string logfilename;
+    std::ofstream fos;
 };
 #endif /* CALIBRATE_MOCAP_AND_CAMERA_H */
 

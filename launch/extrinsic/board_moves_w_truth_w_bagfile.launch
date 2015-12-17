@@ -6,10 +6,14 @@
 
     <arg name="file_A" default="extrinsic_calib_2015-12-16-13-53-19.bag" />
     <arg name="file_B" default="extrinsic_calib_2015-12-16-14-33-58.bag" />
-    <arg name="file_C" default="extrinsic_calib_2015-12-15-14-35-08.bag" />
-    <arg name="file_D" default="" />
-    <arg name="file_E" default="" />    
-    <arg name="file_1" default="$(arg file_B)" />
+    <arg name="file_C" default="extrinsic_calib_2015-12-16-14-35-08.bag" />
+    <arg name="file_D" default="extrinsic_calib_2015-12-17-12-29-09.bag" />
+    <arg name="file_E" default="extrinsic_calib_2015-12-17-12-30-18.bag" />    
+    <arg name="file_F" default="extrinsic_calib_2015-12-17-14-00-25.bag" />   
+    <arg name="file_G" default="extrinsic_calib_2015-12-17-14-02-04.bag" />   
+    <arg name="file_H" default="extrinsic_calib_2015-12-17-14-05-05.bag" />   
+    <arg name="file_J" default="extrinsic_calib_2015-12-17-14-48-43.bag" />   
+    <arg name="file_1" default="$(arg file_J)" />
     
     <!-- parameters for real-time rviz visualization -->
     <arg name="run_rviz" default="false"/>
@@ -86,13 +90,15 @@
     <arg name="vrpn_tf_cam_marker_topic" default="/tf_cam" />   
     
     <node name="calibrate_mocap_and_camera" pkg="calibrate_mocap_and_camera"
-        type="calibrate_mocap_and_camera"
-        output="screen">
+          type="calibrate_mocap_and_camera"
+          output="screen">
         
         <param name="tf_cam_topic" value="$(arg vrpn_tf_cam_marker_topic)/pose"/>
         <param name="tf_calib_topic" value="$(arg vrpn_tf_calib_marker_topic)/pose"/>
         <param name="optical_parent" value = "optitrack"/>
         <param name="optical_frame" value = "$(arg rgb_optical_frame)"/>
+        <param name="logdata" value = "false"/>
+        <param name="logfilename" value = "/home.old/arwillis/calib_transforms.txt"/>
     </node>
     
     <!--
@@ -101,11 +107,11 @@
           args="0.0 -0.01 0.01  -0.5 0.5 -0.5 -0.5 $(arg rgbd_frame) reefbot_base 100" />
     -->
     <node name="tf_calib_to_ar_calib" pkg="tf"
-        type="static_transform_publisher"
-        args="0.00085 0.000385 -0.017555 0 0 0 1 $(arg vrpn_tf_calib_marker_topic) ar_calib_frame 100" />
+          type="static_transform_publisher"
+          args="0.00085 0.000385 -0.017555 0 0 0 1 $(arg vrpn_tf_calib_marker_topic) ar_calib_frame 100" />
 
     <node name="ar_calib_to_optical_ar_calib" pkg="tf"
-        type="static_transform_publisher"
-        args="0.0 0.0 0.0 0 0 0 1 ar_calib_frame ar_optical_frame 100" />
+          type="static_transform_publisher"
+          args="0.0 0.0 0.0 0 0 0 1 ar_calib_frame ar_optical_frame 100" />
         
 </launch>
