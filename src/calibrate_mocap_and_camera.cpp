@@ -99,14 +99,19 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
     ROS_INFO("Heard ar_calib_pose.");
     static tf::TransformListener listener;
     static tf::TransformBroadcaster br;
+    static geometry_msgs::TransformStampedConstPtr prior_tf;
+    static tf::Vector3 prior_axis;
+
     std::string cam_frame_id_str("tf_cam");
     std::string calib_frame_id_str("tf_calib");
     tf::StampedTransform cam_marker_pose;
     tf::StampedTransform calib_marker_pose;
     tf::StampedTransform tf_cam_to_rgb_optical_frame;
-
-    ROS_INFO("Looking up transform from frame '%s' to frame '%s'", map_frame_id_str.c_str(),
-            cam_frame_id_str.c_str());
+    static bool DEBUG = false;
+    if (DEBUG) {
+        ROS_INFO("Looking up transform from frame '%s' to frame '%s'", map_frame_id_str.c_str(),
+                cam_frame_id_str.c_str());
+    }
     //ros::Time queryTime(ros::Time(0));
     ros::Time queryTime = ros::Time::now();
     //ros::Time queryTime(ros::Time::now()-ros::Duration(0.1));
@@ -123,11 +128,13 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
         ROS_ERROR("%s", ex.what());
         //        ros::Duration(1.0).sleep();
     }
-    std::cout << "cam_pose = " << cam_marker_pose.getOrigin().x() << ", " <<
-            cam_marker_pose.getOrigin().y() << ", " << cam_marker_pose.getOrigin().z() << std::endl;
-    std::cout << "calib_pose = " << calib_marker_pose.getOrigin().x() << ", " <<
-            calib_marker_pose.getOrigin().y() << ", " << calib_marker_pose.getOrigin().z() << std::endl;
-    std::cout << "ar_pose = " << ar_calib_pose->transform.translation << std::endl;
+    if (DEBUG) {
+        std::cout << "cam_pose = " << cam_marker_pose.getOrigin().x() << ", " <<
+                cam_marker_pose.getOrigin().y() << ", " << cam_marker_pose.getOrigin().z() << std::endl;
+        std::cout << "calib_pose = " << calib_marker_pose.getOrigin().x() << ", " <<
+                calib_marker_pose.getOrigin().y() << ", " << calib_marker_pose.getOrigin().z() << std::endl;
+        std::cout << "ar_pose = " << ar_calib_pose->transform.translation << std::endl;
+    }
     static geometry_msgs::TransformStamped ar_calib_to_camera;
 
     tf::Transform transform;
@@ -159,14 +166,51 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
     }
     br.sendTransform(tf::StampedTransform(tf_cam_to_rgb_optical_frame,
             ros::Time::now(), "tf_cam", "calib_rgb_optical_pose"));
-    std::cout << "calib_result = " << tf_cam_to_rgb_optical_frame.getOrigin().x() << ", " <<
-            tf_cam_to_rgb_optical_frame.getOrigin().y() << ", " << tf_cam_to_rgb_optical_frame.getOrigin().z() << std::endl;
+    if (DEBUG) {
+        std::cout << "calib_result = " << tf_cam_to_rgb_optical_frame.getOrigin().x() << ", " <<
+                tf_cam_to_rgb_optical_frame.getOrigin().y() << ", " << tf_cam_to_rgb_optical_frame.getOrigin().z() << std::endl;
+    }
     tf::Quaternion calib_rot = tf_cam_to_rgb_optical_frame.getRotation();
     tf::Vector3 calib_translation = tf_cam_to_rgb_optical_frame.getOrigin();
+//    std::cout << "calib_tran = [" << calib_translation.getX() << " "
+//            << calib_translation.getY() << " "
+//            << calib_translation.getZ() << "] "
+//            << "calib_quat = ["
+//            << calib_rot.getX() << " "
+//            << calib_rot.getY() << " "
+//            << calib_rot.getZ() << " "
+//            << calib_rot.getW() << "]" << std::endl;
+    if (prior_tf) {
+        // check for flipped axis estimate (with 2 second "no data = no flip" rule for axis)
+        if (ar_calib_pose->header.stamp.sec - prior_tf->header.stamp.sec < 2) {
+            //std::cout << "Checking for axis flip axis_dot_prod = " << prior_axis.dot(calib_rot.getAxis()) << std::endl;
+            if (prior_axis.dot(calib_rot.getAxis()) < -0.9) {
+                //std::cout << "Axis flip detected! Flipping quaternion sign." << std::endl;
+                calib_rot.setX(-calib_rot.getX());
+                calib_rot.setY(-calib_rot.getY());
+                calib_rot.setZ(-calib_rot.getZ());
+                calib_rot.setW(-calib_rot.getW());
+            }
+        }
+        // update prior transform rotation axis every 300msec
+        if (ar_calib_pose->header.stamp.nsec - prior_tf->header.stamp.nsec > 3000000) {
+            prior_tf = ar_calib_pose;
+            prior_axis = calib_rot.getAxis();
+        }
+    } else { // no prior value available -- update
+        prior_tf = ar_calib_pose;
+        prior_axis = calib_rot.getAxis();
+    }
+
+    std::cout << "calib_tran = [" << calib_translation.getX() << " "
+            << calib_translation.getY() << " "
+            << calib_translation.getZ() << "] "
+            << "calib_quat = ["
+            << calib_rot.getX() << " "
+            << calib_rot.getY() << " "
+            << calib_rot.getZ() << " "
+            << calib_rot.getW() << "]" << std::endl;
     if (logdata) {
-        //        fprintf(fos, "%f %f %f %f %f %f %f\n",
-        //                calib_translation.getX(), calib_translation.getY(), calib_translation.getZ(),
-        //                calib_rot.getX(), calib_rot.getY(), calib_rot.getZ(), calib_rot.getW());
         fos << calib_translation.getX() << " "
                 << calib_translation.getY() << " "
                 << calib_translation.getZ() << " "
@@ -252,7 +296,7 @@ int main(int argc, char **argv) {
     privnh.param<std::string>("optical_frame", optical_frame, "rgb_optical_frame");
     std::cout << "RGBD parent coordinate frame name = \"" << optical_parent << "\"" << std::endl;
     std::cout << "RGBD coordinate frame name =  \"" << optical_frame << "\"" << std::endl;
-    CalibrateMocapAndCamera::Ptr engineptr(new CalibrateMocapAndCamera(optical_parent, 
+    CalibrateMocapAndCamera::Ptr engineptr(new CalibrateMocapAndCamera(optical_parent,
             optical_frame, _logdata, _logfilename));
     //    std::cout << "Initializing transform to ground truth from topic \""
     //            << tf_camera_marker_topic << "\"" << std::endl;
