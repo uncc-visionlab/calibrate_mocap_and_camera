@@ -110,9 +110,13 @@
     <arg name="create_bag" default="false" />
     <arg name="savefile" default="/home/arwillis/extrinsic_calib.bag" />
 
-    <arg name="bag_topics" 
-         default="/tf $(arg vrpn_tf_calib_marker_topic)/pose $(arg vrpn_tf_cam_marker_topic)/pose /ar_single_board/pose /ar_single_board/transform /camera/rgb/image_raw /camera/rgb/camera_info"/> 
-
+    <arg name="bag_topics"
+         default="/tf $(arg vrpn_tf_calib_marker_topic)/pose $(arg vrpn_tf_cam_marker_topic)/pose /ar_single_board/pose /ar_single_board/transform /ar_single_board/result /camera/rgb/image_raw /camera/rgb/camera_info"/> 
+    <!-- minimal topic set for calibration -->
+    <!--
+    <arg name="bag_topics"
+         default="/tf $(arg vrpn_tf_calib_marker_topic)/pose $(arg vrpn_tf_cam_marker_topic)/pose /ar_single_board/pose /ar_single_board/transform"/> 
+    -->
     <node name="tf_calib" pkg="ros_vrpn_client" 
           type="ros_vrpn_client" args="__name=$(arg vrpn_tf_calib_marker_topic)/pose _vrpn_server_ip:=$(arg vrpn_server_ip)"
           output="screen" if="$(arg use_optitrack)"/>
