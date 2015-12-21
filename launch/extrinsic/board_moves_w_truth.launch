@@ -109,6 +109,8 @@
     <!-- parameters for bagging topic data to file -->
     <arg name="create_bag" default="false" />
     <arg name="savefile" default="/home/arwillis/extrinsic_calib.bag" />
+    <arg name="log_calibration_data" default="false" />
+    <arg name="calibration_data_filename" default="/home/arwillis/calib_transforms.txt" />
 
     <arg name="bag_topics"
          default="/tf $(arg vrpn_tf_calib_marker_topic)/pose $(arg vrpn_tf_cam_marker_topic)/pose /ar_single_board/pose /ar_single_board/transform /ar_single_board/result /camera/rgb/image_raw /camera/rgb/camera_info"/> 
@@ -141,6 +143,8 @@
         <param name="ar_calib_topic" value="/ar_single_board/transform"/>
         <param name="optical_parent" value = "$(arg map_frame)"/>
         <param name="optical_frame" value = "$(arg rgb_optical_frame)"/>
+        <param name="logdata" value = "$(arg log_calibration_data)"/>
+        <param name="logfilename" value = "$(arg calibration_data_filename)"/>        
     </node>
 <!--
     <node name="optical_to_odom" pkg="tf" 
