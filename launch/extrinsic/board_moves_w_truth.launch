@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
+
     <arg name="run_rviz" default="true"/>
+    <arg name="log_calibration_data" default="false" />
+    <arg name="calibration_data_filename" default="/home/arwillis/calib_transforms.txt" />
+
+    <!-- parameters for bagging topic data to file -->
+    <arg name="create_bag" default="false" />
+    <arg name="savefile" default="/home/arwillis/extrinsic_calib.bag" />
 
     <include file="$(find openni2_launch)/launch/openni2.launch"/>
   <!-- <include file="$(find rgbd_launch)/launch/includes/manager.launch.xml">
@@ -107,12 +114,6 @@
     <arg name="path" default="$(find calibrate_mocap_and_camera)" />
     <arg name="rviz_config_file" default="calibrate_mocap_and_camera.rviz" />    
     
-    <!-- parameters for bagging topic data to file -->
-    <arg name="create_bag" default="false" />
-    <arg name="savefile" default="/home/arwillis/extrinsic_calib.bag" />
-    <arg name="log_calibration_data" default="false" />
-    <arg name="calibration_data_filename" default="/home/arwillis/calib_transforms.txt" />
-
     <arg name="bag_topics"
          default="/tf $(arg vrpn_tf_calib_marker_topic)/pose $(arg vrpn_tf_cam_marker_topic)/pose /ar_single_board/pose /ar_single_board/transform /ar_single_board/result /camera/rgb/image_raw /camera/rgb/camera_info"/> 
     <!-- minimal topic set for calibration -->

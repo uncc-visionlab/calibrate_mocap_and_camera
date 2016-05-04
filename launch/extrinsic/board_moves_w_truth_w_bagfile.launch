@@ -4,7 +4,7 @@
     <arg name="camera_info" default="file://$(find calibrate_mocap_and_camera)/launch/rgb_PS1080_PrimeSense.yaml"/>
     <arg name="rgb_optical_frame" default="rgb_optical_frame" />
 
-    <arg name="file_A" default="extrinsic_calib_2015-12-16-13-53-19.bag" />
+    <arg name="file_A" default="extrinsic_calib_2015-12-21-11-41-17.bag" />
     <arg name="file_B" default="extrinsic_calib_2015-12-16-14-33-58.bag" />
     <arg name="file_C" default="extrinsic_calib_2015-12-16-14-35-08.bag" />
     <arg name="file_D" default="extrinsic_calib_2015-12-17-12-29-09.bag" />
@@ -13,7 +13,7 @@
     <arg name="file_G" default="extrinsic_calib_2015-12-17-14-02-04.bag" />   
     <arg name="file_H" default="extrinsic_calib_2015-12-17-14-05-05.bag" />   
     <arg name="file_J" default="extrinsic_calib_2015-12-17-14-48-43.bag" />   
-    <arg name="file_1" default="$(arg file_J)" />
+    <arg name="file_1" default="$(arg file_A)" />
     
     <!-- parameters for real-time rviz visualization -->
     <arg name="run_rviz" default="false"/>
