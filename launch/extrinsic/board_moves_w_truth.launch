@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
-<include file="$(find openni2_launch)/launch/openni2.launch"/>
+    <arg name="run_rviz" default="true"/>
+
+    <include file="$(find openni2_launch)/launch/openni2.launch"/>
   <!-- <include file="$(find rgbd_launch)/launch/includes/manager.launch.xml">
             <arg name="name" value="$(arg manager)" />
             <arg name="debug" value="$(arg debug)" />
@@ -25,7 +27,7 @@
         <arg name="sensor_type_kinect_xbox360" value="$(arg sensor_type_kinect_xbox360)" />        
     </include>  -->
 
-    <arg name="camera_info" default="file://$(find calibrate_mocap_and_camera)/launch/rgb_PS1080_PrimeSense.yaml"/>
+    <arg name="camera_info" default="file://$(find calibrate_mocap_and_camera)/launch/extrinsic/rgb_PS1080_PrimeSense.yaml"/>
     <!--    
         <arg name="camera_enable" default="true"/>
         <arg name="camera_device" default="/dev/video0"/>
@@ -102,7 +104,6 @@
     <arg name="vrpn_tf_cam_marker_topic" default="/tf_cam" />  
 
     <!-- parameters for real-time rviz visualization -->
-    <arg name="run_rviz" default="true"/>
     <arg name="path" default="$(find calibrate_mocap_and_camera)" />
     <arg name="rviz_config_file" default="calibrate_mocap_and_camera.rviz" />    
     
