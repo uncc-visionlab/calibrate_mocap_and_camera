@@ -1,4 +1,3 @@
-top
 # Intrinsic and Extrinsic Calibration
 For an overview of obtaining the intrinsic and extrinsic camera calibration
 parameters, generating an AruCo pattern, and constructing the calibration
@@ -78,7 +77,7 @@ AruCo calibration board should be recognized as **tf_calib**. Select the marker 
 ### Calibration
 1. Orient the the AruCo pattern as shown below and place in in the center of the camera's field of vision.
 
-  <img src="/data/single/pose_calib_00.png?raw=true" width="300">
+    <img src="/data/single/pose_calib_00.png?raw=true" width="300">
 
 2. Leave the board stationary, and slowly move the camera.
 
@@ -105,24 +104,19 @@ The transform data must have outliers/discontinuities removed before being used 
   %     R - rotation matrix
   %     
   % VERSION: 03.03.2012
-
   w = Qrotation( 1 );
   x = Qrotation( 2 );
   y = Qrotation( 3 );
   z = Qrotation( 4 );
-
   Rxx = 1 - 2*(y^2 + z^2);
   Rxy = 2*(x*y - z*w);
   Rxz = 2*(x*z + y*w);
-
   Ryx = 2*(x*y + z*w);
   Ryy = 1 - 2*(x^2 + z^2);
   Ryz = 2*(y*z - x*w );
-
   Rzx = 2*(x*z - y*w );
   Rzy = 2*(y*z + x*w );
   Rzz = 1 - 2 *(x^2 + y^2);
-
   R = [
       Rxx,    Rxy,    Rxz;
       Ryx,    Ryy,    Ryz;
@@ -132,8 +126,7 @@ The transform data must have outliers/discontinuities removed before being used 
 3. Place this file in the same directory as the `calib_analysis.m` file, inside a folder called **"quaternions"**.
 
 4. Edit the `calib_analysis.m` file:
-
-    After `addpath(quaternions)`, add the name of your transforms file without file extension and save.
+    - After `addpath(quaternions)`, add the name of your transforms file without file extension and save.
 
 5. Edit the transforms file:
     - add the first line:
