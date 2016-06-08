@@ -1,76 +1,58 @@
-<!doctype html>
-<html>
-<head>
-<title>Page Title</title>
-</head>
-<body>
-
-<h1>Intrinsic and Extrinsic Calibration</h1>
-<p>For an overview of obtaining the intrinsic and extrinsic camera calibration
+# Intrinsic and Extrinsic Calibration
+For an overview of obtaining the intrinsic and extrinsic camera calibration
 parameters, generating an AruCo pattern, and constructing the calibration
 board, visit the
-<a href="http://visionlab.uncc.edu/dokuwiki/ros_and_camera_calibration ">
-  wiki.</a>
-Once your AruCo pattern is generated, and the board is constructed, install the
-package, "calibrate_mocap_and_camera", from the GitLab repository. This package
-depends upon:
-<ol>
-  <li>openni2_launch</li>
-  <li>openni2_camera</li>
-  <li>ar_sys</li>
-  <li>camera_calibration (from image_pipeline)</li>
-  <li>ros_vrpn_client</li>
-</ol>
-For installation, dependencies 1, 2 and 3 were installed using:
-<pre>
-<style type="text/css">
-code { background-color: #CBCBCB; }
-</style>
-<code>$ sudo apt-get install ros-indigo-openni2-launch ros-indigo-openni2-camera ros-indigo-ar-sys
-</code>
-</pre>
-</p>
-Dependencies 4 and 5 were cloned in the local workspace
-<pre>
-<style type="text/css">
-code { background-color: #CBCBCB; }
-</style>
-<code>$ sudo apt-get install ros-indigo-ar-sys
-</code>
-</pre>
-</p>
+[UNCC Visionlab wiki](http://visionlab.uncc.edu/dokuwiki/ros_and_camera_calibration).
 
-<h2> Intrinsic Calibration </h2>
-<p>
-For intrinsic calibration of the rgbd camera, run the launch file
-"calibrate_rgbd_rgb_cam.launch" from the calibrate_mocap_and_camera package:
-<pre>
-<style type="text/css">
-code { background-color: #CBCBCB; }
-</style>
-<code>$ roslaunch calibrate_mocap_and_camera calibrate_rgbd_rgb_cam.launch
-</code>
-</pre>
-For intrinsic calibration of the ir camera, run the launch file
-"calibrate_rgbd_ir_cam.launch" from the calibrate_mocap_and_camera package:
-<pre>
-<style type="text/css">
-code { background-color: #CBCBCB; }
-</style>
-<code>$ roslaunch calibrate_mocap_and_camera calibrate_rgbd_ir_cam.launch
-</code>
-</pre>
-When calibrating, rotate and shift the board in the camera's field of view
-until the progress bars for x, y, skew and size are green. Once the bars are
+## Installation
+Once your AruCo pattern is generated, and the board is constructed, install the [`calibrate_mocap_and_camera`](https://git.antcenter.net/awillis/calibrate_mocap_and_camera) package:
+
+    git clone <fill in here>
+
+### Dependencies
+This package depends upon:
+  1. `openni2_launch`
+  2. `openni2_camera`
+  3. `ar_sys`
+  4. `image_pipeline`
+  5. `ros_vrpn_client`
+
+For installation on Ubuntu 14.04 LTS using ROS Indigo, `openni2_launch`, `openni2_camera`, and `ar_sys` were available through the package manager:
+
+    sudo apt-get install ros-indigo-openni2-launch ros-indigo-openni2-camera ros-indigo-ar-sys
+
+[`image_pipeline`](http://wiki.ros.org/image_pipeline) and [`ros_vrpn_client`](https://git.antcenter.net/Pathfinder3/ros_vrpn_client) were cloned into the workspace's source folder.
+
+    git clone https://git.antcenter.net/Pathfinder3/ros_vrpn_client.git
+    git clone https://github.com/ros-perception/image_pipeline.git
+
+## Intrinsic Calibration
+For intrinsic calibration of the RGB camera, run the launch file
+**calibrate_rgbd_rgb_cam.launch** from the `calibrate_mocap_and_camera` package:
+
+    roslaunch calibrate_mocap_and_camera calibrate_rgbd_rgb_cam.launch
+
+For intrinsic calibration of the IR camera, run the launch file
+**calibrate_rgbd_ir_cam.launch** from the `calibrate_mocap_and_camera package`:
+
+    roslaunch calibrate_mocap_and_camera calibrate_rgbd_ir_cam.launch
+
+**Note:** Only RGB intrinsic calibration needs to be performed for extrinsic calibration.
+
+### Calibration
+
+1. Rotate and shift the board in the camera's field of view until the progress bars for x, y, skew and size are green.
+
+2. Once the bars are
 filled, the option to generate the intrinsic calibration parameters becomes
-available. Click calibrate, save, and commit to obtain the parameters.
-<br><br>
+available.
+
+3. Click calibrate, save, and commit to obtain the parameters.
+
 By default, the intrinsic parameters are stored in a .yml file that can be
 found in ~/.ros/camera_info/
-</p>
 
-<h2> Extrinsic Calibration </h2>
-<p>
+## Extrinsic Calibration
 Connect the computer that will be running the calibration launch file to
 nrcnet.
 <br><br>
@@ -131,6 +113,3 @@ And the last line:
 ]
 
 Save the file with a .m extension
-
-</body>
-</html>
