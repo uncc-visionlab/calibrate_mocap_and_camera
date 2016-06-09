@@ -88,7 +88,9 @@ AruCo calibration board should be recognized as **tf_calib**. Select the marker 
 ### Processing Transform Data
 The transform data must have outliers/discontinuities removed before being used to calculate extrinsic parameters. This data will be plotted and outliers removed manually.
 
-1. Ensure either Matlab or Ocatve is installed:
+A Matlab script will be used to plot transform data and determine outliers. If Matlab is not available, Ocatave can be used instead.
+
+1. Ensure Ocatve is installed:
 
         sudo apt-get install octave
 
@@ -125,8 +127,9 @@ The transform data must have outliers/discontinuities removed before being used 
 
 3. Place this file in the same directory as the `calib_analysis.m` file, inside a folder called **"quaternions"**.
 
-4. Edit the `calib_analysis.m` file:
-    - After `addpath(quaternions)`, add the name of your transforms file without file extension and save.
+4. Edit the `calib_analysis.m` file-
+
+  After `addpath(quaternions)`, add the name of your transforms file without file extension and save.
 
 5. Edit the transforms file:
     - add the first line:
@@ -135,4 +138,26 @@ The transform data must have outliers/discontinuities removed before being used 
           ]
     - Save the file with a .m extension
 
-6. Run the `calib_analysis.m` script
+6. Run the `calib_analysis.m` script:
+
+        octave --persist calib_analysis.m
+
+  Plots for various pose parameters should appear.
+
+7. Investigate these plots and identify discontinuities as shown below.
+
+    <img src="/doc/Extrinsic TF Outlier Example.png?raw=true">
+
+8. These discontinuities must be removed in order to achieve optimal extrinsic calibration. Determine the index of the discontinuity from the plot and comment out the corresponding line(s) in the transform data file.
+
+    <img src="/doc/Extrinsic TF Data Removal.png?raw=true" width="500">
+
+9. Save the transforms file and rerun `calib_analysis.m`.
+
+    <img src="/doc/Extrinsic TF Outlier Removed.png?raw=true">
+
+    The discontinuity should now be removed. Repeat this process for all discontinuities.
+
+10. After removing all discontinuities and running `calib_analysis.m` once more, the extrinsic parameters can be found in the script output in the form of a translation vector and rotation matrix (quaternion).
+
+    <img src="/doc/Extrinsic Calib Console.png?raw=true">
