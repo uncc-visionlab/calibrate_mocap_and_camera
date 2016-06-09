@@ -127,9 +127,7 @@ A Matlab script will be used to plot transform data and determine outliers. If M
 
 3. Place this file in the same directory as the `calib_analysis.m` file, inside a folder called **"quaternions"**.
 
-4. Edit the `calib_analysis.m` file-
-
-  After `addpath(quaternions)`, add the name of your transforms file without file extension and save.
+4. Edit the `calib_analysis.m` file, after `addpath(quaternions)`, add the name of your transforms file without file extension and save.
 
 5. Edit the transforms file:
     - add the first line:
@@ -142,7 +140,7 @@ A Matlab script will be used to plot transform data and determine outliers. If M
 
         octave --persist calib_analysis.m
 
-  Plots for various pose parameters should appear.
+    Plots for various pose parameters should appear.
 
 7. Investigate these plots and identify discontinuities as shown below.
 
