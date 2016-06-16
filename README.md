@@ -16,7 +16,11 @@ This package depends upon:
   3. `ar_sys`
   4. `image_pipeline`
   5. `ros_vrpn_client`
-
+  
+For the XBOX One Kinect (kinectv2), two additional packages are required:
+  6. `libfreenect2`
+  7. `iai_kinect2`
+  
 For installation on Ubuntu 14.04 LTS using ROS Indigo, `openni2_launch`, `openni2_camera`, and `ar_sys` were available through the package manager:
 
     sudo apt-get install ros-indigo-openni2-launch ros-indigo-openni2-camera ros-indigo-ar-sys
@@ -25,6 +29,13 @@ For installation on Ubuntu 14.04 LTS using ROS Indigo, `openni2_launch`, `openni
 
     git clone https://git.antcenter.net/Pathfinder3/ros_vrpn_client.git
     git clone https://github.com/ros-perception/image_pipeline.git
+
+If you are using the XBOX One Kinect, and you are using opencv 3, the package `iai_kinect2` will not compile. You will need to compile against a different version of opencv. This can be accomplished by editing CMAKELists.txt in `kinect2_bridge`. Change:
+
+    find_package(OPENCV REQUIRED)
+to
+
+    find_package(OPENCV 2.4.8)
 
 ## Intrinsic Calibration
 Intrinsic calibration refers to the estimation of the parameters intrinsic to the camera that affect the imaging process, such as focal length, image center, image sensor format, distortion, and skew.
