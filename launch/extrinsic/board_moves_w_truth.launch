@@ -2,8 +2,8 @@
 <launch>
 
     <arg name="run_rviz" default="true"/>
-    <arg name="log_calibration_data" default="false" />
-    <arg name="calibration_data_filename" default="/home/arwillis/calib_transforms.txt" />
+    <arg name="log_calibration_data" default="true" />
+    <arg name="calibration_data_filename" default="$(env HOME)/calib_transforms.txt" />
 
     <!-- parameters for bagging topic data to file -->
     <arg name="create_bag" default="false" />
