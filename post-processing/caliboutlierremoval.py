@@ -95,9 +95,9 @@ while(exit != True):
     
     plt.show()
     
-    userparam = input("Select the parameter you would like to limit (x, y, z, ya, pi, ro) or \"exit\" to exit:\n")
+    userparam = input("Select the parameter you would like to limit (x, y, z, yaw, pitch, roll) or \"exit\" to exit:\n")
 
-    if userparam in ['x', 'y', 'z', 'ya', 'pi', 'ro']:
+    if userparam in ['x', 'y', 'z', 'yaw', 'pitch', 'roll']:
         upper = input("Select an upper limit for the data in " + userparam + " (or return for no limit):\n")
         lower = input("Select a lower limit for the data in " + userparam + " (or return for no limit):\n")
         
@@ -115,13 +115,13 @@ while(exit != True):
         elif userparam == 'z':
             z = removeoutliers(z, upper, lower)
         
-        elif userparam == 'ro':
+        elif userparam == 'roll':
             roll = removeoutliers(roll, upper, lower)
             
-        elif userparam == 'pi':
+        elif userparam == 'pitch':
             pitch = removeoutliers(pitch, upper, lower)
         
-        elif userparam == 'ya':
+        elif userparam == 'yaw':
             yaw = removeoutliers(yaw, upper, lower)            
     
     elif userparam == "exit":
