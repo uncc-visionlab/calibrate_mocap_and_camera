@@ -5,7 +5,7 @@
           args="--size=5x4 --square=0.0245 --no-service-check"
           name="calibration_gui" output="screen">
         <remap from="image" to="/camera/rgb/image_raw" />
-        <remap from="camera" to="camera" />
+        <remap from="camera" to="camera/rgb" />
     </node>  
 
 </launch>
