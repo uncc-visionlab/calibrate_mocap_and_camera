@@ -68,7 +68,7 @@ available.
 Extrinsic calibration refers to the estimation of the coordinate system transformations used to relate the world coordinate frame to the camera coordinate frame. Extrinsic parameters will consist of both a translation and rotation matrix.
 
 ### Setup
-1. Connect the computer that will be running the calibration launch file to **nrcnet**, and ensure the Motive software is connected with IP **192.168.0.20**.
+1. Connect the computer that will be running the calibration launch file to **Pathfinder**, and ensure the Motive software is connected with IP **192.168.1.105**.
 
 2. In Motive, open the project
 **Motive Project 2015-12-09 09.37.25 AM.ttp**.
