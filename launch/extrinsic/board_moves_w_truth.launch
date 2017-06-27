@@ -93,7 +93,7 @@
 
     <group if="$(arg result_display)">
         <node ns="/" pkg="image_view" type="image_view" name="image_view$(arg uid)" output="screen">
-            <remap from="image" to="/ar_single_board$(arg uid)/result" />
+            <remap from="image" to="/aruco_single_board$(arg uid)/result" />
 
             <param name="autosize" type="bool" value="$(arg result_autosize)" />
         </node>
