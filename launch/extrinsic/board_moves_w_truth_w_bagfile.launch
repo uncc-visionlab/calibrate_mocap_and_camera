@@ -4,6 +4,10 @@
     <arg name="camera_info" default="file://$(find calibrate_mocap_and_camera)/launch/rgb_PS1080_PrimeSense.yaml"/>
     <arg name="rgb_optical_frame" default="rgb_optical_frame" />
 
+    <arg name="driver_cv_camera" value="false"/>
+    <arg name="driver_openni2" value="false"/>
+    <arg name="driver_astra" value="true"/>
+
     <arg name="file_A" default="extrinsic_calib_2015-12-21-11-41-17.bag" />
     <arg name="file_B" default="extrinsic_calib_2015-12-16-14-33-58.bag" />
     <arg name="file_C" default="extrinsic_calib_2015-12-16-14-35-08.bag" />
@@ -13,7 +17,7 @@
     <arg name="file_G" default="extrinsic_calib_2015-12-17-14-02-04.bag" />   
     <arg name="file_H" default="extrinsic_calib_2015-12-17-14-05-05.bag" />   
     <arg name="file_J" default="extrinsic_calib_2015-12-17-14-48-43.bag" />   
-    <arg name="file_1" default="$(arg file_A)" />
+    <arg name="file_1" default="$(arg file_J)" />
     
     <!-- parameters for real-time rviz visualization -->
     <arg name="run_rviz" default="false"/>
@@ -30,13 +34,9 @@
     <arg name="result_display" default="true"/>
     <arg name="result_autosize" default="true"/>
     <arg name="result_draw_markers" default="true" />
-    <arg name="result_draw_markers_cube" default="true" />
     <arg name="result_draw_markers_axis" default="true" />
 
     <arg name="uid" default=""/>
-    <arg name="video_namespace" default="camera/rgb"/>
-    <arg name="video_image_topic" default="image_raw"/>
-    <arg name="video_info_topic" default="camera_info"/>
     <arg name="video_rectified" default="false" />
 
     <arg name="board_config" default="$(find calibrate_mocap_and_camera)/data/single/pose_calib_00.yml" />
@@ -44,30 +44,19 @@
     <arg name="marker_size" default="0.035" />
     <arg name="publish_tf" default="true" />
 
-    <!--
-    <group if="$(arg camera_enable)">
-        <node ns="$(arg video_namespace)" pkg="image_proc" type="image_proc" name="image_proc$(arg uid)" />
-        <node ns="$(arg video_namespace)" pkg="uvc_camera" type="uvc_camera_node" name="uvc_camera$(arg uid)" output="screen">
-            <param name="width" type="int" value="$(arg camera_width)" />
-            <param name="height" type="int" value="$(arg camera_height)" />
-            <param name="fps" type="int" value="$(arg camera_fps)" />
-            <param name="frame_id" type="string" value="/$(arg camera_frame_id)" />
-            <param name="device" type="string" value="$(arg camera_device)" />
-            <param name="camera_info_url" type="string" value="$(arg camera_info)" />
-        </node>
-    </group>
-    -->
-    <!--
     <node ns="/" pkg="ar_sys" type="single_board" name="ar_single_board$(arg uid)" output="screen">
-        <remap from="/camera_info" to="$(arg video_namespace)/$(arg video_info_topic)" />
-        <remap from="/image" to="$(arg video_namespace)/$(arg video_image_topic)" />
+        <remap from="/camera_info" to="/cv_camera_node/camera_info" if="$(arg driver_cv_camera)"/>
+        <remap from="/image" to="/cv_camera_node/image_raw" if="$(arg driver_cv_camera)"/>
+        <remap from="/camera_info" to="/camera/rgb/camera_info" if="$(arg driver_openni2)"/>
+        <remap from="/image" to="/camera/rgb/image_raw" if="$(arg driver_openni2)"/>
+        <remap from="/camera_info" to="/camera/rgb/camera_info" if="$(arg driver_astra)"/>
+        <remap from="/image" to="/camera/rgb/image_raw" if="$(arg driver_astra)"/>
 
         <param name="image_is_rectified" type="bool" value="$(arg video_rectified)"/>
         <param name="board_config" type="string" value="$(arg board_config)"/>
         <param name="board_frame" type="string" value="/$(arg board_frame_id)" />
         <param name="marker_size" type="double" value="$(arg marker_size)"/>
         <param name="draw_markers" type="bool" value="$(arg result_draw_markers)" />
-        <param name="draw_markers_cube" type="bool" value="$(arg result_draw_markers_cube)" />
         <param name="draw_markers_axis" type="bool" value="$(arg result_draw_markers_axis)" />
         <param name="publish_tf" value="$(arg publish_tf)" />
     </node>
@@ -80,7 +69,6 @@
             <param name="autosize" type="bool" value="$(arg result_autosize)" />
         </node>
     </group>
-    -->
         
     <!-- parameters for ground truth experiments -->
     <!-- specify the vrpn server IP for transform ground truth -->

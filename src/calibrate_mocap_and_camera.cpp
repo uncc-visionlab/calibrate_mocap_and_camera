@@ -172,14 +172,6 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
     }
     tf::Quaternion calib_rot = tf_cam_to_rgb_optical_frame.getRotation();
     tf::Vector3 calib_translation = tf_cam_to_rgb_optical_frame.getOrigin();
-//    std::cout << "calib_tran = [" << calib_translation.getX() << " "
-//            << calib_translation.getY() << " "
-//            << calib_translation.getZ() << "] "
-//            << "calib_quat = ["
-//            << calib_rot.getX() << " "
-//            << calib_rot.getY() << " "
-//            << calib_rot.getZ() << " "
-//            << calib_rot.getW() << "]" << std::endl;
     if (prior_tf) {
         // check for flipped axis estimate (with 2 second "no data = no flip" rule for axis)
         if (ar_calib_pose->header.stamp.sec - prior_tf->header.stamp.sec < 2) {
