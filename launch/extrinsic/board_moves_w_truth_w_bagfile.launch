@@ -44,7 +44,7 @@
     <arg name="marker_size" default="0.035" />
     <arg name="publish_tf" default="true" />
 
-    <node ns="/" pkg="ar_sys" type="single_board" name="ar_single_board$(arg uid)" output="screen">
+    <node ns="/new" pkg="ar_sys" type="single_board" name="ar_single_board$(arg uid)" output="screen">
         <remap from="/camera_info" to="/cv_camera_node/camera_info" if="$(arg driver_cv_camera)"/>
         <remap from="/image" to="/cv_camera_node/image_raw" if="$(arg driver_cv_camera)"/>
         <remap from="/camera_info" to="/camera/rgb/camera_info" if="$(arg driver_openni2)"/>
