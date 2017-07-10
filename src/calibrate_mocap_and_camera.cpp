@@ -96,7 +96,7 @@ void CalibrateMocapAndCamera::tf_calib_marker_Callback(const geometry_msgs::Tran
 }
 
 void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::TransformStampedConstPtr& ar_calib_pose) {
-    ROS_INFO("Heard ar_calib_pose.");
+    //ROS_INFO("Heard ar_calib_pose.");
     static tf::TransformListener listener;
     static tf::TransformBroadcaster br;
     static geometry_msgs::TransformStampedConstPtr prior_tf;
@@ -172,27 +172,8 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
     }
     tf::Quaternion calib_rot = tf_cam_to_rgb_optical_frame.getRotation();
     tf::Vector3 calib_translation = tf_cam_to_rgb_optical_frame.getOrigin();
-    if (prior_tf) {
-        // check for flipped axis estimate (with 2 second "no data = no flip" rule for axis)
-        if (ar_calib_pose->header.stamp.sec - prior_tf->header.stamp.sec < 2) {
-            //std::cout << "Checking for axis flip axis_dot_prod = " << prior_axis.dot(calib_rot.getAxis()) << std::endl;
-            if (prior_axis.dot(calib_rot.getAxis()) < -0.9) {
-                //std::cout << "Axis flip detected! Flipping quaternion sign." << std::endl;
-                calib_rot.setX(-calib_rot.getX());
-                calib_rot.setY(-calib_rot.getY());
-                calib_rot.setZ(-calib_rot.getZ());
-                calib_rot.setW(-calib_rot.getW());
-            }
-        }
-        // update prior transform rotation axis every 300msec
-        if (ar_calib_pose->header.stamp.nsec - prior_tf->header.stamp.nsec > 3000000) {
-            prior_tf = ar_calib_pose;
-            prior_axis = calib_rot.getAxis();
-        }
-    } else { // no prior value available -- update
-        prior_tf = ar_calib_pose;
-        prior_axis = calib_rot.getAxis();
-    }
+    prior_tf = ar_calib_pose;
+    prior_axis = calib_rot.getAxis();
 
     std::cout << "calib_tran = [" << calib_translation.getX() << " "
             << calib_translation.getY() << " "
