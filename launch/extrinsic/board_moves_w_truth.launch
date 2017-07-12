@@ -2,9 +2,10 @@
 <launch>
 
     <arg name="run_rviz" default="true"/>
+    <arg name="driver_usb_cam" value="false"/>
     <arg name="driver_cv_camera" value="false"/>
-    <arg name="driver_openni2" value="false"/>
-    <arg name="driver_astra" value="true"/>
+    <arg name="driver_openni2" value="true"/>
+    <arg name="driver_astra" value="false"/>
     
     <arg name="log_calibration_data" default="true" />
     <arg name="calibration_data_filename" default="$(env HOME)/calib_transforms.txt" />

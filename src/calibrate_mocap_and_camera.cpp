@@ -125,7 +125,7 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
         listener.lookupTransform(map_frame_id_str, calib_frame_id_str,
                 queryTime, calib_marker_pose);
     } catch (tf::TransformException ex) {
-        ROS_ERROR("%s", ex.what());
+        //ROS_ERROR("%s", ex.what());
         //        ros::Duration(1.0).sleep();
     }
     if (DEBUG) {
@@ -161,7 +161,7 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
         listener.lookupTransform(cam_frame_id_str, "rgb_optical_pose",
                 queryTime, tf_cam_to_rgb_optical_frame);
     } catch (tf::TransformException ex) {
-        ROS_ERROR("%s", ex.what());
+        //ROS_ERROR("%s", ex.what());
         //        ros::Duration(1.0).sleep();
     }
     br.sendTransform(tf::StampedTransform(tf_cam_to_rgb_optical_frame,
