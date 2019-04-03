@@ -14,23 +14,23 @@ board, visit the
 
 2. [Dependencies](#Dependencies)
 
-3. [Intrinsic Calibration](#Intrinsic Calibration)
+3. [Intrinsic Calibration](#intrinsic-calibration)
 
-    A. [Setup](#Launch setup)
+    A. [Setup](#launch-setup)
 
     B. [Calibration](#Execution)
 
-4. [Extrinsic Calibration](#Extrinsic Calibration)
+4. [Extrinsic Calibration](#extrinsic-calibration)
 
-    A. [Setup](#File setup)
+    A. [Setup](#file-setup)
 
     B. [Calibration](#Calibration)
 
-    C. [Processing Transform Data](#Processing Transform Data)
+    C. [Processing Transform Data](#processing-transform-data)
 
-5. [Aruco Board Advice] (#Aruco Board Advice)
+5. [Aruco Board Advice] (#aruco-board-advice)
 
-6. [Running Cableless] (#Running Cableless)
+6. [Running Cableless] (#running-cableless)
 
 <a name="Installation"/>
 ## Installation
