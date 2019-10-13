@@ -16,8 +16,10 @@
     <arg name="file_F" default="extrinsic_calib_2015-12-17-14-00-25.bag" />   
     <arg name="file_G" default="extrinsic_calib_2015-12-17-14-02-04.bag" />   
     <arg name="file_H" default="extrinsic_calib_2015-12-17-14-05-05.bag" />   
-    <arg name="file_J" default="extrinsic_calib_2015-12-17-14-48-43.bag" />   
-    <arg name="file_1" default="$(arg file_J)" />
+    <arg name="file_J" default="extrinsic_calib_2015-12-17-14-48-43.bag" />  
+    <arg name="file_K" default="small_board_board_moves_bag_filtered.bag" />   
+    <arg name="file_L" default="small_board_camera_moves_bag_filtered.bag" />   
+    <arg name="file_1" default="$(arg file_L)" />
     
     <!-- parameters for real-time rviz visualization -->
     <arg name="run_rviz" default="false"/>
@@ -44,7 +46,7 @@
     <arg name="marker_size" default="0.035" />
     <arg name="publish_tf" default="true" />
 
-    <node ns="/new" pkg="ar_sys" type="single_board" name="ar_single_board$(arg uid)" output="screen">
+    <node ns="/" pkg="ar_sys" type="single_board" name="ar_single_board$(arg uid)" output="screen">
         <remap from="/camera_info" to="/cv_camera_node/camera_info" if="$(arg driver_cv_camera)"/>
         <remap from="/image" to="/cv_camera_node/image_raw" if="$(arg driver_cv_camera)"/>
         <remap from="/camera_info" to="/camera/rgb/camera_info" if="$(arg driver_openni2)"/>
@@ -54,7 +56,7 @@
 
         <param name="image_is_rectified" type="bool" value="$(arg video_rectified)"/>
         <param name="board_config" type="string" value="$(arg board_config)"/>
-        <param name="board_frame" type="string" value="/$(arg board_frame_id)" />
+        <param name="board_frame" type="string" value="$(arg board_frame_id)" />
         <param name="marker_size" type="double" value="$(arg marker_size)"/>
         <param name="draw_markers" type="bool" value="$(arg result_draw_markers)" />
         <param name="draw_markers_axis" type="bool" value="$(arg result_draw_markers_axis)" />
@@ -76,7 +78,7 @@
     <arg name="vrpn_server_ip" default="192.168.0.20" />    
     <arg name="vrpn_tf_calib_marker_topic" default="/tf_calib" />  
     <arg name="vrpn_tf_cam_marker_topic" default="/tf_cam" />   
-    
+
     <node name="calibrate_mocap_and_camera" pkg="calibrate_mocap_and_camera"
           type="calibrate_mocap_and_camera"
           output="screen">
@@ -85,10 +87,9 @@
         <param name="tf_calib_topic" value="$(arg vrpn_tf_calib_marker_topic)/pose"/>
         <param name="optical_parent" value = "optitrack"/>
         <param name="optical_frame" value = "$(arg rgb_optical_frame)"/>
-        <param name="logdata" value = "false"/>
-        <param name="logfilename" value = "/home.old/arwillis/calib_transforms.txt"/>
+        <param name="logdata" value = "true"/>
+        <param name="logfilename" value = "/home/arwillis/calib_transforms.txt"/>
     </node>
-    
     <!--
   <node name="reefbot_base" pkg="tf" 
           type="static_transform_publisher"  
@@ -96,10 +97,11 @@
     -->
     <node name="tf_calib_to_ar_calib" pkg="tf"
           type="static_transform_publisher"
-          args="0.00085 0.000385 -0.017555 0 0 0 1 $(arg vrpn_tf_calib_marker_topic) ar_calib_frame 100" />
-
+          args="0.00085 0.000385 -0.017555 0 0 0 1 $(arg vrpn_tf_calib_marker_topic) ar_xform 100" />
     <node name="ar_calib_to_optical_ar_calib" pkg="tf"
           type="static_transform_publisher"
-          args="0.0 0.0 0.0 0 0 0 1 ar_calib_frame ar_optical_frame 100" />
-        
+          args="0.0 0.0 0.0 0 0 0 1 ar_xform ar_calib_frame 100" />-->
+    <!--<node name="ar_calib_to_optical_ar_calib" pkg="tf"
+          type="static_transform_publisher"
+          args="0.0 0.0 0.0 0 0 0 1 ar_calib_frame camera_rgb_optical_frame 100" />-->
 </launch>

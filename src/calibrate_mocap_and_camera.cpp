@@ -115,26 +115,26 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
     //ros::Time queryTime(ros::Time(0));
     ros::Time queryTime = ros::Time::now();
     //ros::Time queryTime(ros::Time::now()-ros::Duration(0.1));
-    try {
-        listener.waitForTransform(map_frame_id_str, cam_frame_id_str,
-                queryTime, ros::Duration(1));
-        listener.lookupTransform(map_frame_id_str, cam_frame_id_str,
-                queryTime, cam_marker_pose);
-        listener.waitForTransform(map_frame_id_str, calib_frame_id_str,
-                queryTime, ros::Duration(1));
-        listener.lookupTransform(map_frame_id_str, calib_frame_id_str,
-                queryTime, calib_marker_pose);
-    } catch (tf::TransformException ex) {
-        //ROS_ERROR("%s", ex.what());
-        //        ros::Duration(1.0).sleep();
-    }
-    if (DEBUG) {
-        std::cout << "cam_pose = " << cam_marker_pose.getOrigin().x() << ", " <<
-                cam_marker_pose.getOrigin().y() << ", " << cam_marker_pose.getOrigin().z() << std::endl;
-        std::cout << "calib_pose = " << calib_marker_pose.getOrigin().x() << ", " <<
-                calib_marker_pose.getOrigin().y() << ", " << calib_marker_pose.getOrigin().z() << std::endl;
-        std::cout << "ar_pose = " << ar_calib_pose->transform.translation << std::endl;
-    }
+//    try {
+//        listener.waitForTransform(map_frame_id_str, cam_frame_id_str,
+//                queryTime, ros::Duration(1));
+//        listener.lookupTransform(map_frame_id_str, cam_frame_id_str,
+//                queryTime, cam_marker_pose);
+//        listener.waitForTransform(map_frame_id_str, calib_frame_id_str,
+//                queryTime, ros::Duration(1));
+//        listener.lookupTransform(map_frame_id_str, calib_frame_id_str,
+//                queryTime, calib_marker_pose);
+//    } catch (tf::TransformException ex) {
+//        //ROS_ERROR("%s", ex.what());
+//        //        ros::Duration(1.0).sleep();
+//    }
+//    if (DEBUG) {
+//        std::cout << "cam_pose = " << cam_marker_pose.getOrigin().x() << ", " <<
+//                cam_marker_pose.getOrigin().y() << ", " << cam_marker_pose.getOrigin().z() << std::endl;
+//        std::cout << "calib_pose = " << calib_marker_pose.getOrigin().x() << ", " <<
+//                calib_marker_pose.getOrigin().y() << ", " << calib_marker_pose.getOrigin().z() << std::endl;
+//        std::cout << "ar_pose = " << ar_calib_pose->transform.translation << std::endl;
+//    }
     static geometry_msgs::TransformStamped ar_calib_to_camera;
 
     tf::Transform transform;
@@ -148,21 +148,25 @@ void CalibrateMocapAndCamera::ar_calib_pose_Callback(const geometry_msgs::Transf
     //    e_x *= -1;
     //    rotationMatrix[0] = e_x;
     //    transform.setBasis(rotationMatrix);
-    transform.setOrigin(tf::Vector3(ar_calib_pose->transform.translation.x,
-            ar_calib_pose->transform.translation.y, ar_calib_pose->transform.translation.z));
-    transform.setRotation(tf::Quaternion(ar_calib_pose->transform.rotation.x, ar_calib_pose->transform.rotation.y,
-            ar_calib_pose->transform.rotation.z, ar_calib_pose->transform.rotation.w).normalize());
-    tf::Transform itransform = transform.inverse();
-    br.sendTransform(tf::StampedTransform(itransform,
-            ros::Time::now(), "ar_optical_frame", "rgb_optical_pose"));
+//    transform.setOrigin(tf::Vector3(ar_calib_pose->transform.translation.x,
+//            ar_calib_pose->transform.translation.y, ar_calib_pose->transform.translation.z));
+//    transform.setRotation(tf::Quaternion(ar_calib_pose->transform.rotation.x, ar_calib_pose->transform.rotation.y,
+//            ar_calib_pose->transform.rotation.z, ar_calib_pose->transform.rotation.w).normalize());
+    //tf::Transform itransform = transform.inverse();
+    //br.sendTransform(tf::StampedTransform(itransform,
+    //        ros::Time::now(), "ar_optical_frame", "rgb_optical_pose"));
     try {
-        listener.waitForTransform(cam_frame_id_str, "rgb_optical_pose",
-                queryTime, ros::Duration(1));
-        listener.lookupTransform(cam_frame_id_str, "rgb_optical_pose",
+        //listener.waitForTransform(cam_frame_id_str, "rgb_optical_pose",
+        //        queryTime, ros::Duration(1));
+        //listener.lookupTransform(cam_frame_id_str, "rgb_optical_pose",
+        //        queryTime, tf_cam_to_rgb_optical_frame);
+        listener.waitForTransform(cam_frame_id_str, "camera_rgb_optical_frame",
+                queryTime, ros::Duration(.5));
+        listener.lookupTransform(cam_frame_id_str, "camera_rgb_optical_frame",
                 queryTime, tf_cam_to_rgb_optical_frame);
     } catch (tf::TransformException ex) {
-        //ROS_ERROR("%s", ex.what());
-        //        ros::Duration(1.0).sleep();
+        ROS_ERROR("Could not get calibration time before timeout! %s", ex.what());
+                ros::Duration(0.01).sleep();
     }
     br.sendTransform(tf::StampedTransform(tf_cam_to_rgb_optical_frame,
             ros::Time::now(), "tf_cam", "calib_rgb_optical_pose"));
